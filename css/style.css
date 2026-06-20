@@ -1,0 +1,239 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+body {
+    background: #0f0f0f;
+    color: #e8e8e8;
+    min-height: 100vh;
+}
+
+.site-header {
+    background: #141414;
+    border-bottom: 1px solid #2a2a2a;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-inner {
+    max-width: 1300px;
+    margin: auto;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #ffffff;
+    white-space: nowrap;
+    letter-spacing: -0.3px;
+}
+
+.logo-dot {
+    width: 12px;
+    height: 12px;
+    background: #e63946;
+    border-radius: 50%;
+    animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.4; transform: scale(1.3); }
+}
+
+.filters {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    flex: 1;
+    justify-content: flex-end;
+}
+
+.filters input {
+    flex: 1;
+    min-width: 180px;
+    padding: 10px 14px;
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: #e8e8e8;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.filters input::placeholder {
+    color: #666;
+}
+
+.filters input:focus {
+    border-color: #e63946;
+}
+
+.filters select {
+    padding: 10px 14px;
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: #e8e8e8;
+    font-size: 0.9rem;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.filters select:focus {
+    border-color: #e63946;
+}
+
+.filters button {
+    padding: 10px 22px;
+    background: #e63946;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.filters button:hover {
+    background: #c1121f;
+}
+
+.filters button:active {
+    transform: scale(0.97);
+}
+
+.main-content {
+    max-width: 1300px;
+    margin: auto;
+    padding: 32px 24px;
+}
+
+#newsContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+}
+
+.card {
+    background: #1a1a1a;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #2a2a2a;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    border-color: #e63946;
+}
+
+.card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background: #222;
+}
+
+.card-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 10px;
+}
+
+.card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #ffffff;
+    line-height: 1.45;
+}
+
+.card p {
+    font-size: 0.875rem;
+    color: #999;
+    line-height: 1.55;
+    flex: 1;
+}
+
+.card a {
+    display: inline-block;
+    margin-top: auto;
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid #e63946;
+    border-radius: 6px;
+    color: #e63946;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    align-self: flex-start;
+    transition: background 0.2s, color 0.2s;
+}
+
+.card a:hover {
+    background: #e63946;
+    color: #fff;
+}
+
+.loader {
+    width: 44px;
+    height: 44px;
+    border: 4px solid #2a2a2a;
+    border-top: 4px solid #e63946;
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+    margin: 60px auto;
+}
+
+.hidden {
+    display: none;
+}
+
+.error {
+    color: #e63946;
+    text-align: center;
+    font-size: 1rem;
+    padding: 40px 0;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+    .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .filters {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .filters input {
+        min-width: 0;
+        width: 100%;
+    }
+}
