@@ -1,11 +1,7 @@
-// NewsData.io - works directly in browsers including GitHub Pages
-// Free tier: 200 requests/day — https://newsdata.io/register
-// Replace with your own key from https://newsdata.io/api-key
+// NewsData.io — free tier, works in browsers on GitHub Pages
 const API_KEY = "pub_a20b7b78d9e64cfabac2d7f7ff5a340a";
-
 const BASE_URL = "https://newsdata.io/api/1";
 
-// Map category names to NewsData.io category values
 const CATEGORY_MAP = {
     general: "top",
     business: "business",
@@ -13,6 +9,18 @@ const CATEGORY_MAP = {
     sports: "sports",
     health: "health",
 };
+
+// Fetch with a timeout so we don't hang forever
+async function fetchWithTimeout(url, ms = 10000) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), ms);
+    try {
+        const response = await fetch(url, { signal: controller.signal });
+        return response;
+    } finally {
+        clearTimeout(timer);
+    }
+}
 
 export async function fetchNews(searchTerm, category) {
     try {
@@ -22,10 +30,10 @@ export async function fetchNews(searchTerm, category) {
             url = `${BASE_URL}/news?apikey=${API_KEY}&q=${encodeURIComponent(searchTerm)}&language=en`;
         } else {
             const cat = CATEGORY_MAP[category] || "top";
-            url = `${BASE_URL}/news?apikey=${API_KEY}&category=${cat}&language=en`;
+            url = `${BASE_URL}/latest?apikey=${API_KEY}&category=${cat}&language=en&removeduplicate=1`;
         }
 
-        const response = await fetch(url);
+        const response = await fetchWithTimeout(url, 10000);
 
         if (!response.ok) {
             throw new Error(`Failed to fetch news (${response.status})`);
@@ -37,7 +45,7 @@ export async function fetchNews(searchTerm, category) {
             throw new Error(data.message || "Failed to fetch news");
         }
 
-        // Normalize fields to match what render.js expects
+        // Normalize to the shape render.js expects
         return data.results.map(article => ({
             title: article.title,
             description: article.description,
@@ -46,6 +54,9 @@ export async function fetchNews(searchTerm, category) {
         }));
 
     } catch (error) {
+        if (error.name === "AbortError") {
+            throw new Error("Request timed out. Please try again.");
+        }
         throw error;
     }
 }
