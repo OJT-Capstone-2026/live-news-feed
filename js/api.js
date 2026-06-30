@@ -1,38 +1,49 @@
-const API_KEY = "cbf5c3ee5e8a4c19bf3e8026d5dc2f26";
+// NewsData.io - works directly in browsers including GitHub Pages
+// Free tier: 200 requests/day — https://newsdata.io/register
+// Replace with your own key from https://newsdata.io/api-key
+const API_KEY = "pub_a20b7b78d9e64cfabac2d7f7ff5a340a";
 
-const BASE_URL = "https://newsapi.org/v2";
+const BASE_URL = "https://newsdata.io/api/1";
 
-// allorigins proxies the request server-side, bypassing NewsAPI's browser block
-const PROXY = "https://api.allorigins.win/get?url=";
+// Map category names to NewsData.io category values
+const CATEGORY_MAP = {
+    general: "top",
+    business: "business",
+    technology: "technology",
+    sports: "sports",
+    health: "health",
+};
 
 export async function fetchNews(searchTerm, category) {
     try {
-        let newsUrl;
+        let url;
 
         if (searchTerm) {
-            newsUrl = `${BASE_URL}/everything?q=${encodeURIComponent(searchTerm)}&apiKey=${API_KEY}`;
+            url = `${BASE_URL}/news?apikey=${API_KEY}&q=${encodeURIComponent(searchTerm)}&language=en`;
         } else {
-            newsUrl = `${BASE_URL}/top-headlines?country=us&category=${category}&apiKey=${API_KEY}`;
+            const cat = CATEGORY_MAP[category] || "top";
+            url = `${BASE_URL}/news?apikey=${API_KEY}&category=${cat}&language=en`;
         }
 
-        const proxiedUrl = `${PROXY}${encodeURIComponent(newsUrl)}`;
-
-        const response = await fetch(proxiedUrl);
+        const response = await fetch(url);
 
         if (!response.ok) {
             throw new Error(`Failed to fetch news (${response.status})`);
         }
 
-        const outer = await response.json();
+        const data = await response.json();
 
-        // allorigins wraps the actual response inside { contents: "..." }
-        const data = JSON.parse(outer.contents);
-
-        if (data.status !== "ok") {
-            throw new Error(data.message || "NewsAPI error");
+        if (data.status !== "success") {
+            throw new Error(data.message || "Failed to fetch news");
         }
 
-        return data.articles;
+        // Normalize fields to match what render.js expects
+        return data.results.map(article => ({
+            title: article.title,
+            description: article.description,
+            url: article.link,
+            urlToImage: article.image_url,
+        }));
 
     } catch (error) {
         throw error;
